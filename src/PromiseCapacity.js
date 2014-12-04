@@ -166,15 +166,35 @@ void function (define) {
                     capacity.fulfilledCallbacks = [];
                     callbacks = capacity.rejectedCallbacks;
                 }
-
-                capacity.invoke(function () {
+                
+          if (window.navigator.appVersion.indexOf('Trident') > -1) {
+              (function () {
                     var callback;
                     var val = capacity.result;
 
                     while (callback = callbacks.shift()) {
                         callback(val);
                     }
-                });
+             })();
+          } else {
+            capacity.invoke(function () {
+                var callback;
+                var val = capacity.result;
+
+                while (callback = callbacks.shift()) {
+                callback(val);
+                }
+            });
+          } 
+          // IE10下测试，发现capacity.invoke 提示对象无法执行
+                // capacity.invoke(function () {
+                //     var callback;
+                //     var val = capacity.result;
+
+                //     while (callback = callbacks.shift()) {
+                //         callback(val);
+                //     }
+                // });
             }
 
             return PromiseCapacity;
